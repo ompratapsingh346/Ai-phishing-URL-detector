@@ -4,11 +4,16 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>AI Phishing Dashboard</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
 
@@ -16,88 +21,378 @@
             margin:0;
             padding:0;
             box-sizing:border-box;
+            font-family:Arial;
         }
 
         body{
 
-            font-family:Arial, sans-serif;
-
             background:#020617;
 
             color:white;
-        }
-
-        .container{
-
-            width:90%;
-
-            margin:auto;
-
-            padding:30px;
-        }
-
-        h1{
-
-            text-align:center;
-
-            margin-bottom:40px;
-
-            font-size:48px;
-        }
-
-        .cards{
 
             display:flex;
-
-            gap:20px;
-
-            margin-bottom:40px;
         }
 
-        .card{
+        /* ALERT */
 
-            flex:1;
+        .alert{
 
-            background:#1e293b;
+            position:fixed;
 
-            padding:30px;
+            top:20px;
 
-            border-radius:20px;
+            right:20px;
 
-            text-align:center;
+            background:#ef4444;
 
-            box-shadow:0 0 10px rgba(0,0,0,0.3);
+            color:white;
+
+            padding:20px 30px;
+
+            border-radius:15px;
+
+            font-size:18px;
+
+            font-weight:bold;
+
+            display:none;
+
+            z-index:1000;
+
+            animation:slide 0.5s ease;
         }
 
-        .card h3{
+        @keyframes slide{
 
-            font-size:24px;
+            from{
+                transform:translateX(100%);
+            }
 
-            margin-bottom:20px;
+            to{
+                transform:translateX(0);
+            }
         }
 
-        .card h2{
+        /* SIDEBAR */
 
-            font-size:60px;
+        .sidebar{
+
+            width:250px;
+
+            height:100vh;
+
+            background:#0f172a;
+
+            padding:20px;
+
+            position:fixed;
+
+            left:0;
+            top:0;
         }
 
-        .chart-container{
+        .logo{
 
-            width:400px;
+            font-size:40px;
 
-            height:400px;
-
-            margin:auto;
+            font-weight:bold;
 
             margin-bottom:50px;
 
+            text-align:center;
+
+            color:#3b82f6;
+        }
+
+        .menu{
+
+            list-style:none;
+        }
+
+        .menu li{
+
+            padding:18px;
+
+            margin-bottom:15px;
+
+            border-radius:12px;
+
+            cursor:pointer;
+
+            transition:0.3s;
+
+            font-size:20px;
+        }
+
+        .menu li:hover{
+
             background:#1e293b;
+        }
+
+        .menu i{
+
+            margin-right:12px;
+        }
+
+        /* MAIN */
+
+        .main{
+
+            margin-left:250px;
+
+            width:100%;
+
+            padding:25px;
+        }
+
+        /* TOPBAR */
+
+        .topbar{
+
+            background:#0f172a;
+
+            padding:25px;
+
+            border-radius:20px;
+
+            margin-bottom:25px;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+        }
+
+        .topbar h1{
+
+            font-size:50px;
+        }
+
+        .topbar button{
+
+            background:#2563eb;
+
+            color:white;
+
+            border:none;
+
+            padding:15px 30px;
+
+            border-radius:12px;
+
+            cursor:pointer;
+
+            font-size:18px;
+        }
+
+        .topbar button:hover{
+
+            background:#1d4ed8;
+        }
+
+        /* SEARCH */
+
+        .search-box{
+
+            background:#0f172a;
 
             padding:20px;
 
             border-radius:20px;
 
-            box-shadow:0 0 10px rgba(0,0,0,0.3);
+            margin-bottom:25px;
+        }
+
+        .search-box input{
+
+            width:100%;
+
+            padding:18px;
+
+            border:none;
+
+            border-radius:12px;
+
+            background:#1e293b;
+
+            color:white;
+
+            font-size:18px;
+        }
+
+        /* SCANNER */
+
+        .scanner-box{
+
+            background:#0f172a;
+
+            padding:20px;
+
+            border-radius:20px;
+
+            display:flex;
+
+            gap:15px;
+
+            margin-bottom:25px;
+        }
+
+        .scanner-box input{
+
+            flex:1;
+
+            padding:18px;
+
+            border:none;
+
+            border-radius:12px;
+
+            font-size:18px;
+
+            background:#1e293b;
+
+            color:white;
+        }
+
+        .scanner-box button{
+
+            background:#2563eb;
+
+            color:white;
+
+            border:none;
+
+            padding:18px 30px;
+
+            border-radius:12px;
+
+            cursor:pointer;
+
+            font-size:18px;
+        }
+
+        .scanner-box button:hover{
+
+            background:#1d4ed8;
+        }
+
+        /* RESULT */
+
+        .scan-result{
+
+            background:#0f172a;
+
+            padding:25px;
+
+            border-radius:20px;
+
+            margin-bottom:25px;
+
+            display:none;
+        }
+
+        .safe-text{
+
+            color:#22c55e;
+
+            font-weight:bold;
+        }
+
+        .phishing-text{
+
+            color:#ef4444;
+
+            font-weight:bold;
+        }
+
+        /* CARDS */
+
+        .cards{
+
+            display:grid;
+
+            grid-template-columns:
+                    repeat(auto-fit,minmax(250px,1fr));
+
+            gap:20px;
+
+            margin-bottom:30px;
+        }
+
+        .card{
+
+            background:#0f172a;
+
+            padding:30px;
+
+            border-radius:20px;
+
+            transition:0.3s;
+        }
+
+        .card:hover{
+
+            transform:translateY(-5px);
+        }
+
+        .card h3{
+
+            color:#94a3b8;
+
+            margin-bottom:15px;
+
+            font-size:25px;
+        }
+
+        .card h2{
+
+            font-size:65px;
+        }
+
+        /* CHART */
+
+        .chart-section{
+
+            background:#0f172a;
+
+            padding:30px;
+
+            border-radius:20px;
+
+            margin-bottom:30px;
+        }
+
+        .chart-section h2{
+
+            margin-bottom:25px;
+
+            font-size:40px;
+        }
+
+        .chart-container{
+
+            width:350px;
+
+            margin:auto;
+        }
+
+        /* TABLE */
+
+        .table-section{
+
+            background:#0f172a;
+
+            padding:30px;
+
+            border-radius:20px;
+        }
+
+        .table-section h2{
+
+            margin-bottom:25px;
+
+            font-size:40px;
         }
 
         table{
@@ -105,41 +400,45 @@
             width:100%;
 
             border-collapse:collapse;
-
-            background:#1e293b;
-
-            border-radius:20px;
-
-            overflow:hidden;
-        }
-
-        table th,
-        table td{
-
-            padding:20px;
-
-            border-bottom:1px solid #334155;
-
-            text-align:left;
         }
 
         table th{
 
-            background:#0f172a;
+            background:#1e293b;
+
+            padding:18px;
+
+            text-align:left;
 
             font-size:20px;
         }
 
-        table tr:hover{
+        table td{
 
-            background:#334155;
+            padding:18px;
+
+            border-bottom:1px solid #334155;
+
+            font-size:18px;
         }
 
-        h2{
+        table tr:hover{
 
-            margin-bottom:20px;
+            background:#1e293b;
+        }
 
-            font-size:36px;
+        .safe{
+
+            color:#22c55e;
+
+            font-weight:bold;
+        }
+
+        .phishing{
+
+            color:#ef4444;
+
+            font-weight:bold;
         }
 
     </style>
@@ -148,9 +447,104 @@
 
 <body>
 
-<div class="container">
+<!-- ALERT -->
 
-    <h1>AI Phishing Detection Dashboard</h1>
+<div id="alertBox"
+     class="alert">
+
+    ⚠ PHISHING WEBSITE DETECTED
+
+</div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        AI Shield
+    </div>
+
+    <ul class="menu">
+
+        <li>
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+        </li>
+
+        <li>
+            <i class="fa-solid fa-shield-halved"></i>
+            Threat Analysis
+        </li>
+
+        <li>
+            <i class="fa-solid fa-globe"></i>
+            URL Scans
+        </li>
+
+        <li>
+            <i class="fa-solid fa-database"></i>
+            Database
+        </li>
+
+        <li>
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </li>
+
+    </ul>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <h1>
+            AI Phishing Detection Dashboard
+        </h1>
+
+        <button onclick="downloadReport()">
+            Generate Report
+        </button>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="search-box">
+
+        <input type="text"
+               id="searchInput"
+               placeholder="Search URL..."
+               onkeyup="filterTable()">
+
+    </div>
+
+    <!-- LIVE SCANNER -->
+
+    <div class="scanner-box">
+
+        <input type="text"
+               id="urlInput"
+               placeholder="Enter website URL...">
+
+        <button onclick="scanURL()">
+            Scan URL
+        </button>
+
+    </div>
+
+    <!-- RESULT -->
+
+    <div id="scanResult"
+         class="scan-result">
+    </div>
+
+    <!-- CARDS -->
 
     <div class="cards">
 
@@ -158,7 +552,9 @@
 
             <h3>Total Scans</h3>
 
-            <h2 id="totalScans">0</h2>
+            <h2 id="totalScans">
+                0
+            </h2>
 
         </div>
 
@@ -166,7 +562,9 @@
 
             <h3>Safe URLs</h3>
 
-            <h2 id="safeCount">0</h2>
+            <h2 id="safeCount">
+                0
+            </h2>
 
         </div>
 
@@ -174,146 +572,350 @@
 
             <h3>Phishing URLs</h3>
 
-            <h2 id="phishingCount">0</h2>
+            <h2 id="phishingCount">
+                0
+            </h2>
 
         </div>
 
     </div>
 
-    <div class="chart-container">
+    <!-- CHART -->
 
-        <canvas id="myChart"></canvas>
+    <div class="chart-section">
+
+        <h2>
+            Threat Analytics
+        </h2>
+
+        <div class="chart-container">
+
+            <canvas id="myChart"></canvas>
+
+        </div>
 
     </div>
 
-    <h2>Recent Scan History</h2>
+    <!-- TABLE -->
 
-    <table>
+    <div class="table-section">
 
-        <thead>
+        <h2>
+            Recent Scan Activity
+        </h2>
 
-        <tr>
+        <table>
 
-            <th>URL</th>
+            <thead>
 
-            <th>Result</th>
+            <tr>
 
-            <th>Time</th>
+                <th>URL</th>
 
-        </tr>
+                <th>Result</th>
 
-        </thead>
+                <th>Time</th>
 
-        <tbody id="historyTable">
+            </tr>
 
-        </tbody>
+            </thead>
 
-    </table>
+            <tbody id="historyTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 
 <script>
 
-async function loadDashboard(){
+    async function scanURL(){
 
-    const response =
-        await fetch("http://localhost:8080/history");
+        const url =
+            document.getElementById("urlInput").value;
 
-    const data = await response.json();
+        const response =
+            await fetch(
+                "http://localhost:8080/scan",
+                {
 
-    let safe = 0;
+                    method:"POST",
 
-    let phishing = 0;
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
 
-    const table =
-        document.getElementById("historyTable");
+                    body:JSON.stringify({
+                        url:url
+                    })
+                }
+            );
 
-    table.innerHTML = "";
+        const data =
+            await response.json();
 
-    data.forEach(item => {
+        const resultBox =
+            document.getElementById("scanResult");
 
-        if(item.result === "Safe"){
+        resultBox.style.display = "block";
 
-            safe++;
+        if(
+            data.result.includes("Phishing")
+        ){
+
+            const alertBox =
+                document.getElementById("alertBox");
+
+            alertBox.style.display = "block";
+
+            setTimeout(() => {
+
+                alertBox.style.display = "none";
+
+            }, 3000);
         }
-        else{
 
-            phishing++;
-        }
+        resultBox.innerHTML = `
 
-        table.innerHTML += `
+            <h2>
+                Scan Result
+            </h2>
 
-            <tr>
+            <br>
 
-                <td>${item.url}</td>
+            <p>
+                <strong>URL:</strong>
+                ${data.url}
+            </p>
 
-                <td>${item.result}</td>
+            <br>
 
-                <td>${item.scanTime}</td>
+            <p class="${
+                data.result.includes("Safe")
+                ? "safe-text"
+                : "phishing-text"
+            }">
 
-            </tr>
+                <strong>Result:</strong>
+                ${data.result}
+
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Risk Score:</strong>
+                ${data.riskScore}
+            </p>
 
         `;
-    });
 
-    document.getElementById("totalScans")
-        .innerText = data.length;
+        loadDashboard();
+    }
 
-    document.getElementById("safeCount")
-        .innerText = safe;
+    function filterTable(){
 
-    document.getElementById("phishingCount")
-        .innerText = phishing;
+        const input =
+            document.getElementById("searchInput");
 
-    new Chart(document.getElementById("myChart"), {
+        const filter =
+            input.value.toLowerCase();
 
-        type:'doughnut',
+        const table =
+            document.getElementById("historyTable");
 
-        data:{
+        const rows =
+            table.getElementsByTagName("tr");
 
-            labels:['Safe','Phishing'],
+        for(let i = 0; i < rows.length; i++){
 
-            datasets:[{
+            const url =
+                rows[i]
+                .getElementsByTagName("td")[0];
 
-                data:[safe, phishing],
+            if(url){
 
-                backgroundColor:[
+                const text =
+                    url.textContent
+                    || url.innerText;
 
-                    '#22c55e',
+                rows[i].style.display =
+                    text.toLowerCase().includes(filter)
+                    ? ""
+                    : "none";
+            }
+        }
+    }
 
-                    '#ef4444'
-                ],
+    function downloadReport(){
 
-                borderWidth:0
-            }]
-        },
+        window.print();
+    }
 
-        options:{
+    async function loadDashboard(){
 
-            responsive:true,
+        const response =
+            await fetch(
+                "http://localhost:8080/history"
+            );
 
-            cutout:'70%',
+        const data =
+            await response.json();
 
-            plugins:{
+        let safe = 0;
 
-                legend:{
+        let phishing = 0;
 
-                    labels:{
+        const table =
+            document.getElementById("historyTable");
 
-                        color:'white',
+        table.innerHTML = "";
 
-                        font:{
+        data.forEach(item => {
 
-                            size:16
+            if(
+                item.result.includes("Safe")
+            ){
+                safe++;
+            }
+            else{
+                phishing++;
+            }
+
+            table.innerHTML += `
+
+                <tr>
+
+                    <td>${item.url}</td>
+
+                    <td class="${
+                        item.result.includes("Safe")
+                        ? "safe"
+                        : "phishing"
+                    }">
+
+                        ${item.result}
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            new Date(item.scannedAt)
+                            .toLocaleString()
+                        }
+
+                    </td>
+
+                </tr>
+            `;
+        });
+
+        animateValue(
+            "totalScans",
+            data.length
+        );
+
+        animateValue(
+            "safeCount",
+            safe
+        );
+
+        animateValue(
+            "phishingCount",
+            phishing
+        );
+
+        new Chart(
+            document.getElementById("myChart"),
+            {
+
+                type:'doughnut',
+
+                data:{
+
+                    labels:[
+                        'Safe',
+                        'Phishing'
+                    ],
+
+                    datasets:[{
+
+                        data:[
+                            safe,
+                            phishing
+                        ],
+
+                        backgroundColor:[
+
+                            '#22c55e',
+
+                            '#ef4444'
+                        ],
+
+                        borderWidth:0
+                    }]
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    cutout:'70%',
+
+                    plugins:{
+
+                        legend:{
+
+                            labels:{
+
+                                color:'white',
+
+                                font:{
+                                    size:16
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-    });
-}
+        );
+    }
 
-loadDashboard();
+    function animateValue(id, end){
+
+        let start = 0;
+
+        const duration = 1000;
+
+        const increment =
+            end / (duration / 10);
+
+        const obj =
+            document.getElementById(id);
+
+        const timer =
+            setInterval(() => {
+
+                start += increment;
+
+                if(start >= end){
+
+                    start = end;
+
+                    clearInterval(timer);
+                }
+
+                obj.innerText =
+                    Math.floor(start);
+
+            }, 10);
+    }
+
+    loadDashboard();
 
 </script>
 

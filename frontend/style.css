@@ -56,3 +56,16 @@ button {
 
     font-weight: bold;
 }
+.content-section{
+    display:none;
+    width:100%;
+}
+
+.active-section{
+    display:block;
+}
+
+.menu-item.active{
+    background:#2952cc;
+    border-radius:12px;
+}

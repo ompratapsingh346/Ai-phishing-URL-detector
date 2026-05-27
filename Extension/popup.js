@@ -1,40 +1,84 @@
-document
-    .getElementById("checkBtn")
-    .addEventListener("click", async () => {
+document.getElementById("scanBtn")
+.addEventListener("click", async () => {
 
-    let [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true
+    const tabs =
+        await chrome.tabs.query({
+            active:true,
+            currentWindow:true
+        });
+
+    const currentUrl =
+        tabs[0].url;
+
+    const response =
+        await fetch(
+            "http://localhost:8080/scan",
+            {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    url:currentUrl
+                })
+            }
+        );
+
+    const data =
+        await response.json();
+
+    const resultBox =
+        document.getElementById("resultBox");
+
+    let reasonsHtml = "";
+
+    data.reasons.forEach(reason => {
+
+        reasonsHtml += `<li>${reason}</li>`;
     });
 
-    let currentURL = tab.url;
+    resultBox.innerHTML = `
 
-    if (currentURL.startsWith("chrome://")) {
-    document.getElementById("result").innerHTML =
-        "Cannot scan Chrome internal pages";
-    return;
-   }
+        <h2 class="${
+            data.result === "Safe"
+            ? "safe"
+            : "phishing"
+        }">
 
-    let response = await fetch(
-        "http://localhost:8080/scan",
-        {
-            method: "POST",
+            ${data.result}
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        </h2>
 
-            body: JSON.stringify({
-                url: currentURL
-            })
-        }
-    );
+        <p>
 
-    let data = await response.json();
+            <strong>Risk Score:</strong>
 
-    document.getElementById("result").innerHTML =
-        `
-        <p><b>URL:</b> ${currentURL}</p>
-        <p><b>Result:</b> ${data.result}</p>
-        `;
+            ${data.riskScore}
+
+        </p>
+
+        <p>
+
+            <strong>URL:</strong>
+
+            ${data.url}
+
+        </p>
+
+        <p>
+
+            <strong>Reasons:</strong>
+
+        </p>
+
+        <ul>
+
+            ${reasonsHtml}
+
+        </ul>
+    `;
 });

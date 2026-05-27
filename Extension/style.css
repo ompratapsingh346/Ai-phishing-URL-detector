@@ -1,27 +1,75 @@
 body{
-    font-family: Arial;
-    width:300px;
+
+    width:350px;
+
+    background:#020617;
+
+    color:white;
+
+    font-family:Arial;
+
     padding:20px;
 }
 
 .container{
+
     text-align:center;
 }
 
+h1{
+
+    font-size:24px;
+
+    margin-bottom:20px;
+}
+
 button{
-    padding:10px 15px;
-    background:#007bff;
+
+    background:#2563eb;
+
     color:white;
+
     border:none;
-    border-radius:5px;
+
+    padding:12px 20px;
+
+    border-radius:10px;
+
     cursor:pointer;
+
+    font-size:16px;
+
+    width:100%;
 }
 
 button:hover{
-    background:#0056b3;
+
+    background:#1d4ed8;
 }
 
-#result{
+#resultBox{
+
     margin-top:20px;
-    word-wrap:break-word;
+
+    background:#1e293b;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    text-align:left;
+}
+
+.safe{
+
+    color:#22c55e;
+
+    font-weight:bold;
+}
+
+.phishing{
+
+    color:#ef4444;
+
+    font-weight:bold;
 }

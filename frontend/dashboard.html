@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Phishing Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+
+            font-family:Arial, sans-serif;
+
+            background:#020617;
+
+            color:white;
+        }
+
+        .container{
+
+            width:90%;
+
+            margin:auto;
+
+            padding:30px;
+        }
+
+        h1{
+
+            text-align:center;
+
+            margin-bottom:40px;
+
+            font-size:48px;
+        }
+
+        .cards{
+
+            display:flex;
+
+            gap:20px;
+
+            margin-bottom:40px;
+        }
+
+        .card{
+
+            flex:1;
+
+            background:#1e293b;
+
+            padding:30px;
+
+            border-radius:20px;
+
+            text-align:center;
+
+            box-shadow:0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .card h3{
+
+            font-size:24px;
+
+            margin-bottom:20px;
+        }
+
+        .card h2{
+
+            font-size:60px;
+        }
+
+        .chart-container{
+
+            width:400px;
+
+            height:400px;
+
+            margin:auto;
+
+            margin-bottom:50px;
+
+            background:#1e293b;
+
+            padding:20px;
+
+            border-radius:20px;
+
+            box-shadow:0 0 10px rgba(0,0,0,0.3);
+        }
+
+        table{
+
+            width:100%;
+
+            border-collapse:collapse;
+
+            background:#1e293b;
+
+            border-radius:20px;
+
+            overflow:hidden;
+        }
+
+        table th,
+        table td{
+
+            padding:20px;
+
+            border-bottom:1px solid #334155;
+
+            text-align:left;
+        }
+
+        table th{
+
+            background:#0f172a;
+
+            font-size:20px;
+        }
+
+        table tr:hover{
+
+            background:#334155;
+        }
+
+        h2{
+
+            margin-bottom:20px;
+
+            font-size:36px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI Phishing Detection Dashboard</h1>
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>Total Scans</h3>
+
+            <h2 id="totalScans">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Safe URLs</h3>
+
+            <h2 id="safeCount">0</h2>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Phishing URLs</h3>
+
+            <h2 id="phishingCount">0</h2>
+
+        </div>
+
+    </div>
+
+    <div class="chart-container">
+
+        <canvas id="myChart"></canvas>
+
+    </div>
+
+    <h2>Recent Scan History</h2>
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>URL</th>
+
+            <th>Result</th>
+
+            <th>Time</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody id="historyTable">
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script>
+
+async function loadDashboard(){
+
+    const response =
+        await fetch("http://localhost:8080/history");
+
+    const data = await response.json();
+
+    let safe = 0;
+
+    let phishing = 0;
+
+    const table =
+        document.getElementById("historyTable");
+
+    table.innerHTML = "";
+
+    data.forEach(item => {
+
+        if(item.result === "Safe"){
+
+            safe++;
+        }
+        else{
+
+            phishing++;
+        }
+
+        table.innerHTML += `
+
+            <tr>
+
+                <td>${item.url}</td>
+
+                <td>${item.result}</td>
+
+                <td>${item.scanTime}</td>
+
+            </tr>
+
+        `;
+    });
+
+    document.getElementById("totalScans")
+        .innerText = data.length;
+
+    document.getElementById("safeCount")
+        .innerText = safe;
+
+    document.getElementById("phishingCount")
+        .innerText = phishing;
+
+    new Chart(document.getElementById("myChart"), {
+
+        type:'doughnut',
+
+        data:{
+
+            labels:['Safe','Phishing'],
+
+            datasets:[{
+
+                data:[safe, phishing],
+
+                backgroundColor:[
+
+                    '#22c55e',
+
+                    '#ef4444'
+                ],
+
+                borderWidth:0
+            }]
+        },
+
+        options:{
+
+            responsive:true,
+
+            cutout:'70%',
+
+            plugins:{
+
+                legend:{
+
+                    labels:{
+
+                        color:'white',
+
+                        font:{
+
+                            size:16
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+loadDashboard();
+
+</script>
+
+</body>
+
+</html>

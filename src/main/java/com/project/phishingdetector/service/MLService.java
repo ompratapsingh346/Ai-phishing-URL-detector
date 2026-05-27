@@ -5,12 +5,16 @@ import weka.classifiers.trees.RandomForest;
 import weka.core.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MLService {
 
     private static Classifier model;
 
     static {
+
         try {
 
             ArrayList<Attribute> attributes = new ArrayList<>();
@@ -25,21 +29,26 @@ public class MLService {
 
             attributes.add(new Attribute("class", classValues));
 
-            Instances trainingData = new Instances(
-                    "PhishingDataset",
-                    attributes,
-                    0
+            Instances trainingData =
+                    new Instances(
+                            "PhishingDataset",
+                            attributes,
+                            0
+                    );
+
+            trainingData.setClassIndex(
+                    trainingData.numAttributes() - 1
             );
 
-            trainingData.setClassIndex(trainingData.numAttributes() - 1);
-
             DenseInstance inst1 = new DenseInstance(4);
+
             inst1.setValue(attributes.get(0), 10);
             inst1.setValue(attributes.get(1), 1);
             inst1.setValue(attributes.get(2), 0);
             inst1.setValue(attributes.get(3), "Safe");
 
             DenseInstance inst2 = new DenseInstance(4);
+
             inst2.setValue(attributes.get(0), 80);
             inst2.setValue(attributes.get(1), 0);
             inst2.setValue(attributes.get(2), 1);
@@ -49,57 +58,107 @@ public class MLService {
             trainingData.add(inst2);
 
             model = new RandomForest();
+
             model.buildClassifier(trainingData);
 
             System.out.println("ML Model Trained Successfully");
 
         } catch (Exception e) {
+
             e.printStackTrace();
         }
     }
 
-    public static String predict(String url) {
+    public static Map<String, Object> predict(String url) {
+
+        Map<String, Object> response = new HashMap<>();
 
         try {
 
-            ArrayList<Attribute> attributes = new ArrayList<>();
+            int riskScore = 0;
 
-            attributes.add(new Attribute("urlLength"));
-            attributes.add(new Attribute("hasHttps"));
-            attributes.add(new Attribute("hasAt"));
+            List<String> reasons = new ArrayList<>();
 
-            ArrayList<String> classValues = new ArrayList<>();
-            classValues.add("Safe");
-            classValues.add("Phishing");
+            // URL Length
 
-            attributes.add(new Attribute("class", classValues));
+            if (url.length() > 25) {
 
-            Instances testData = new Instances(
-                    "TestDataset",
-                    attributes,
-                    0
-            );
+                riskScore += 25;
 
-            testData.setClassIndex(testData.numAttributes() - 1);
+                reasons.add("URL is too long");
+            }
 
-            DenseInstance instance = new DenseInstance(4);
+            // HTTPS Check
 
-            instance.setValue(attributes.get(0), url.length());
-            instance.setValue(attributes.get(1),
-                    url.startsWith("https") ? 1 : 0);
+            if (!url.startsWith("https")) {
 
-            instance.setValue(attributes.get(2),
-                    url.contains("@") ? 1 : 0);
+                riskScore += 20;
 
-            instance.setDataset(testData);
+                reasons.add("No HTTPS detected");
+            }
 
-            double result = model.classifyInstance(instance);
+            // @ Symbol Check
 
-            return classValues.get((int) result);
+            if (url.contains("@")) {
+
+                riskScore += 20;
+
+                reasons.add("Contains @ symbol");
+            }
+
+            // Suspicious Keywords
+
+            if (url.contains("login")
+                    || url.contains("bank")
+                    || url.contains("verify")
+                    || url.contains("secure")) {
+
+                riskScore += 25;
+
+                reasons.add("Contains suspicious keywords");
+            }
+
+            // Special Characters
+
+            if (url.contains("-")) {
+
+                riskScore += 10;
+
+                reasons.add("Contains special characters");
+            }
+
+            // Final Prediction
+
+            String result;
+
+            if (riskScore >= 50) {
+
+                result = "Phishing";
+
+            } else {
+
+                result = "Safe";
+            }
+
+            response.put("url", url);
+
+            response.put("result", result);
+
+            response.put("riskScore", riskScore + "%");
+
+            response.put("reasons", reasons);
+
+            return response;
 
         } catch (Exception e) {
+
             e.printStackTrace();
-            return "Error";
+
+            response.put("result", "Error");
+
+            response.put("url", url);
+
+            return response;
         }
     }
 }
